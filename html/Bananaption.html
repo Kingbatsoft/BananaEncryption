@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>加蕉密与解蕉密工具</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+        input, button {
+            padding: 10px;
+            margin: 5px;
+            font-size: 16px;
+        }
+    </style>
+</head>
+<body>
+
+<h2>加蕉密与解蕉密工具</h2>
+
+<h3>加密</h3>
+<input type="text" id="encryptInput" placeholder="请输入明文蕉" />
+<button onclick="encryptText()">加密</button>
+<p>密文: <span id="encryptedOutput"></span></p>
+
+<h3>解密</h3>
+<input type="text" id="decryptInput" placeholder="请输入密文蕉" />
+<button onclick="decryptText()">解密</button>
+<p>明文: <span id="decryptedOutput"></span></p>
+
+<script>
+function encryptText() {
+    const plaintext = document.getElementById('encryptInput').value;
+    const binaryStr = Array.from(new TextEncoder().encode(plaintext)).map(b => b.toString(2).padStart(8, '0')).join('');
+    
+    let encrypted = binaryStr.replace(/0/g, '蕉').replace(/1/g, '蕉，');
+
+    const endingSymbols = ['.', '?', '!'];
+    const ending = endingSymbols[Math.floor(Math.random() * endingSymbols.length)];
+    
+    document.getElementById('encryptedOutput').textContent = encrypted + ending;
+}
+
+function decryptText() {
+    const ciphertext = document.getElementById('decryptInput').value;
+    const ending = ciphertext[ciphertext.length - 1];
+    const validEnding = ['.', '?', '!'].includes(ending);
+    
+    const textToDecrypt = validEnding ? ciphertext.slice(0, -1) : ciphertext;
+    
+    const binaryStr = textToDecrypt.replace(/蕉，/g, '1').replace(/蕉/g, '0');
+    
+    const byteArray = [];
+    for (let i = 0; i < binaryStr.length; i += 8) {
+        const byte = parseInt(binaryStr.substring(i, i + 8), 2);
+        byteArray.push(byte);
+    }
+    
+    const decryptedText = new TextDecoder().decode(new Uint8Array(byteArray));
+    document.getElementById('decryptedOutput').textContent = decryptedText;
+}
+</script>
+
+</body>
+</html>
